@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "ship.h"
+#include "coordinates.h"
 
 class GameField 
 {
@@ -89,9 +90,15 @@ public:
 
     int getHeight() const;
 
-    bool setShip(Ship* ship, int x, int y, bool isHorizontal);
+    void setShip(Ship* ship, int x, int y, bool isHorizontal);
 
     bool attack(int x, int y);
 
     bool isCellOccupied(int x, int y);
+
+    void getOccupiedCellsCoords(std::vector<Coords>& coords);
+
+    void printField();
+
+    bool anotherShipDestroyed();
 };

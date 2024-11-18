@@ -6,6 +6,7 @@ class ShipManager
 {
 private:
     std::vector<Ship*> ships;
+    unsigned destroyedShipsNum;
 
 public:
     ShipManager(std::vector<unsigned>& shipLengths);
@@ -23,4 +24,6 @@ public:
     void getSegDamaged(int ship_i, int segment_i);
 
     bool areDestroyed();
+
+    bool anotherShipDestroyed();
 }; 

@@ -4,6 +4,7 @@ ShipManager::ShipManager(std::vector<unsigned>& shipLengths) {
     for (auto len : shipLengths) {
         ships.push_back(new Ship(len));
     }
+    destroyedShipsNum = 0;
 };
 
 int ShipManager::getShipsNum() const {
@@ -30,3 +31,19 @@ bool ShipManager::areDestroyed() {
     return true;
 }
 
+bool ShipManager::anotherShipDestroyed() {
+    unsigned curDestroyedShipNum = 0;
+    for (Ship* ship : ships) {
+        if (ship->isDestroyed()) {
+            curDestroyedShipNum++;
+        }
+    }
+
+    if (curDestroyedShipNum == this->destroyedShipsNum) {
+        return false;
+    }
+
+    this->destroyedShipsNum = curDestroyedShipNum;
+
+    return true;
+}
