@@ -1,8 +1,8 @@
 #include "shipmanager.h"
 
 ShipManager::ShipManager(std::vector<unsigned>& shipLengths) {
-    for (auto len : shipLengths) {
-        ships.push_back(new Ship(len));
+    for (int i=0; i<shipLengths.size(); i++) {
+        ships.push_back(new Ship(shipLengths[i], i));
     }
     destroyedShipsNum = 0;
 };
@@ -11,9 +11,9 @@ int ShipManager::getShipsNum() const {
     return ships.size();
 }
 
-Ship* ShipManager::getShip(int ship_i) const {
-    if (ship_i >= 0 && ship_i < ships.size()) {
-        return ships[ship_i];
+Ship* ShipManager::getShip(int ship_i) {
+    for(auto ship : ships) {
+        if(ship->index == ship_i) return ship;
     }
     return nullptr;
 }
@@ -46,4 +46,8 @@ bool ShipManager::anotherShipDestroyed() {
     this->destroyedShipsNum = curDestroyedShipNum;
 
     return true;
+}
+
+void ShipManager::setDestroyedShips(unsigned num) {
+    this->destroyedShipsNum = num;
 }

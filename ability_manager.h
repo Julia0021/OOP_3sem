@@ -1,4 +1,4 @@
-#pragma one
+#pragma once
 #include <queue>
 #include "abilities/double_damage.h"
 #include "abilities/random_ship_attack.h"
@@ -16,5 +16,13 @@ public:
 
     void addAbility();
 
+    void addAbility(Ability* ability);
+
     bool queueIsEmpty();
+
+    Ability& getAbility(int index);
+
+    int getQueueSize();
+
+    void clearQueue();
 };

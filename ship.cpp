@@ -1,7 +1,7 @@
 #include "ship.h"
 
-Ship::Ship(unsigned length, bool isHorizontal)
-    :length(length),position(isHorizontal) {
+Ship::Ship(unsigned length, int index, bool isHorizontal)
+    :length(length),index(index),position(isHorizontal) {
         for (int i = 0; i < length; i++) {
             segments.push_back(Segment::Intact);
         }

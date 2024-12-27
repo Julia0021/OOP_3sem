@@ -23,3 +23,5 @@ void RandomAttack::apply(GameField& field) const {
     int randomY = firstPair.y;
     field.attack(randomX, randomY);
 }
+
+std::string RandomAttack::getName() const { return "Random Attack"; };

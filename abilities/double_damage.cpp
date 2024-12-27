@@ -16,3 +16,5 @@ void DoubleDamage::apply(GameField& field) const {
     field.attack(x, y);
     field.attack(x, y);
 }
+
+std::string DoubleDamage::getName() const { return "Double Damage"; };

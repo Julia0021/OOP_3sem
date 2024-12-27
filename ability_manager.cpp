@@ -33,6 +33,30 @@ void AbilityManager::addAbility() {
     this->abil_queue.push(this->abilities[distrib(gen)]);
 }
 
+void AbilityManager::addAbility(Ability* ability) {
+    this->abil_queue.push(ability);
+}
+
 bool AbilityManager::queueIsEmpty() {
     return this->abil_queue.empty();
+}
+
+Ability& AbilityManager::getAbility(int index) {
+    if(!this->abil_queue.empty()) {
+        std::queue<Ability*> tmp = this->abil_queue;
+        for (int i = 0; i < index; ++i) {
+            tmp.pop();
+        }
+        return *tmp.front();
+    }
+}
+
+int AbilityManager::getQueueSize() {
+    return this->abil_queue.size();
+}
+
+void AbilityManager::clearQueue() {
+    while (!this->abil_queue.empty()) {
+        this->abil_queue.pop();
+    }
 }

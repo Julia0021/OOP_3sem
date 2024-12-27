@@ -13,6 +13,14 @@ int GameField::getHeight() const {
     return height;
 }
 
+std::vector<std::vector<GameField::Cell>> GameField::getField() const {
+    return field;
+}
+
+GameField::Cell& GameField::getCell(int x, int y) {
+    return field[y][x];
+}
+
 void GameField::setShip(Ship* ship, int x, int y, bool isHorizontal) {
 
     // Проверка пересечения с другими кораблями
@@ -76,6 +84,7 @@ void GameField::setShip(Ship* ship, int x, int y, bool isHorizontal) {
         field[currentY][currentX].setStatus(Cell::CellStatus::occupied);
         field[currentY][currentX].setShip(ship);
         field[currentY][currentX].setShipSegIndex(i);
+        field[currentY][currentX].setShipIndex(ship->index);
     }
 
     if (!isHorizontal) ship->changePosition();
@@ -86,12 +95,13 @@ bool GameField::attack(int x, int y) {
         throw AttackOutsideTheFieldException();
     }
 
-    Cell cell = field[y][x];
+    Cell& cell = field[y][x];
     if (cell.getStatus() == Cell::CellStatus::occupied) {
         Ship* ship = cell.getShip();
-        ship->getSegDamaged(cell.getShipSegIndex());
+        int index = cell.getShipSegIndex();
+        ship->getSegDamaged(index);
         return true;
-    }
+    } else {cell.setStatus(Cell::CellStatus::empty);}
 
     return false;
 }
@@ -118,18 +128,62 @@ void GameField::getOccupiedCellsCoords(std::vector<Coords>& coords_vec) {
     }
 }
 
-void GameField::printField() {
-    std::cout << "\n";
+void GameField::getNotDestroyedCellsCoords(std::vector<Coords>& coords_vec) {
+    for(int y=0; y<height; y++) {
+        for(int x=0; x<width; x++) {
+            if(this->isCellOccupied(x, y)) {
+                int index = field[y][x].getShipSegIndex();
+                if(field[y][x].getShip()->getSegStatus(index) != Ship::Segment::Destroyed) {
+                    Coords coords = {x, y};
+                    coords_vec.push_back(coords);
+                }
+            }  else if(this->getCell(x, y).getStatus() == Cell::CellStatus::unknown) {
+                Coords coords = {x, y};
+                coords_vec.push_back(coords);
+            }
+        }
+    }
+}
+
+void GameField::getDamagedCellsCoords(std::vector<Coords>& coords_vec) {
+    for(int y=0; y<height; y++) {
+        for(int x=0; x<width; x++) {
+            if(this->isCellOccupied(x, y)) {
+                int index = field[y][x].getShipSegIndex();
+                if(field[y][x].getShip()->getSegStatus(index) == Ship::Segment::Damaged) {
+                    Coords coords = {x, y};
+                    coords_vec.push_back(coords);
+                }
+            }
+        }
+    }
+}
+
+void GameField::printField(bool hidden) {
+    std::cout << "\n" << "  \033[4m ";
+    for (int i = 0; i < width; i++) {
+        std::cout << i;
+        if (i != width - 1) std::cout << " ";
+    }
+    std::cout << "\033[24m " << "\n";
+
     for (int i = 0; i < height; i++) {
+        std::cout << i << "| ";
         for (int j = 0; j < width; j++) {
-            if(field[i][j].getStatus() == Cell::CellStatus::empty) std::cout << "\033[32m.\033[0m ";
+            if(field[i][j].getStatus() == Cell::CellStatus::empty) std::cout << "\033[1;31m.\033[0m ";
             if(field[i][j].getStatus() == Cell::CellStatus::occupied) {
                 int index = field[i][j].getShipSegIndex();
-                if(field[i][j].getShip()->getSegStatus(index) == Ship::Segment::Destroyed) std::cout << "\033[1;31mX\033[0m ";
-                if(field[i][j].getShip()->getSegStatus(index) == Ship::Segment::Intact) std::cout << "\033[1;32mX\033[0m ";
-                if(field[i][j].getShip()->getSegStatus(index) == Ship::Segment::Damaged) std::cout << "\033[1;33mX\033[0m ";
+                if(this->getCell(j, i).getShip()->getSegStatus(index) == Ship::Segment::Destroyed) std::cout << "\033[1;31mX\033[0m ";
+                if(this->getCell(j, i).getShip()->getSegStatus(index) == Ship::Segment::Intact) {
+                    if(hidden) {
+                        std::cout << "~ ";
+                    } else {
+                        std::cout << "\033[1;32mX\033[0m ";
+                    }
+                }
+                if(this->getCell(j, i).getShip()->getSegStatus(index) == Ship::Segment::Damaged) std::cout << "\033[1;33mX\033[0m ";
             }
-            if(field[i][j].getStatus() == Cell::CellStatus::unknown) std::cout << "? ";
+            if(field[i][j].getStatus() == Cell::CellStatus::unknown) std::cout << "~ ";
         }
         std::cout << "\n";
     }

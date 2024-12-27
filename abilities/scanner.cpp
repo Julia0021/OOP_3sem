@@ -20,3 +20,5 @@ void Scanner::apply(GameField& field) const {
 
     std::cout << "There is no ship segment in this area.\n";
 }
+
+std::string Scanner::getName() const { return "Scanner"; };
